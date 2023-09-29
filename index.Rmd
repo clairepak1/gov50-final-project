@@ -1,14 +1,13 @@
 ---
 title: "Gov 50 Final Project"
-author: "Your Name Here"
-description: "My final project"
+author: "Claire Pak"
+description: "Identifying popular NBA teams using proxies to demonstrate support"
 output:
   distill::distill_article:
     self_contained: false
 ---
 
 
-
 ## Project thoughts
 
-I am interested in exploring data related to...
+I am interested in exploring data related to basketball teams in the NBA. More specifically, I am interested in tracking support for various teams over time and exploring the potential fluctuations to identify which teams have been the most popular during different periods. Some proxies I may use to measure support include attendance at games. However, I understand correlation is not equal to causation, so I plan to look at other factors such as team winning percentage, health of players on the team, number of championships, etc. As of right now, I imagine the various teams will be my independent variable, and then whatever proxy I choose to measure support will serve as my dependent variable. 
