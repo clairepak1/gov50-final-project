@@ -1,7 +1,7 @@
 ---
 title: "Gov 50 Final Project"
 author: "Claire Pak"
-description: "Identifying popular NBA teams using proxies to demonstrate support"
+description: "Identifying popular NBA teams using proxies to demonstrate support."
 output:
   distill::distill_article:
     self_contained: false
