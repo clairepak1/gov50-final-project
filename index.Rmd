@@ -17,3 +17,40 @@ I am interested in exploring data related to basketball teams in the NBA. More s
 
 Does the performance of NBA players improve during the season when their contracts expire, in contrast to performance in previous seasons? In a league as competitive as the NBA, players often feel pressure to maintain peak athleticism, particularly in contract expiration seasons due to the consistent inflow of new talent that enter through the drafts. In this study, I plan to understand the extent to which a player's performance improves in the season of which their contract expires, allowing a player to either re-sign their contract, or be released. I hypothesize that the performance of NBA players significantly improves in the season in which their contract expires, compared to performances in prior seasons. During the season prior to the contract expiration, I expect players to focus on improving key metrics including points per game (PPG), rebounds, steals, etc in efforts to get a resign offer. The explanatory variable is whether we are observing the season in which the contract expires, or seasons prior to the expiration. This variable will be measured by identifying the season a players contract will end. The outcome variable of interest is the player's performance, which can be measured through monitoring key stats such as a player's points per game, steals, rebounds, number of turnovers, etc. I plan to choose a set number of key stats and then compare those across the different seasons. For instance, if a player's contract expires at the end of the 2023-2024 season, my study would compare the PPG, rebounds and steals of this season to those of prior seasons such as 2022-2023, 2021-2022, etc. For the study, I plan to use the NBA advanced statistics dataset on nba.com that includes all of the mentioned key stats and the basketball-reference website to identify this information. A pattern that would provide support for the hypothesis is if there is an overall net increase in the performance metrics for a substantial portion of the season. If the study uses PPG, rebounds and steals per season as the key metrics to measure a player’s performance, there should be a positive relationship where these metrics are higher in the season during which a player’s contract will end, compared to other seasons. If there is no significant change, or perhaps even a decline in the previously mentioned metrics, the negative observed patterns would be an indication that the hypothesis may not be supported. 
 
+##Milestone 3
+
+```{r}
+##Loading necessary packages
+library(readr)
+library(tidyverse)
+library(dplyr)
+```
+
+
+```{r}
+##loading NBA 2022-2023 season data from Kaggle data
+nba_22_23 <- read_csv("nba_22_23_stats.csv")
+```
+
+```{r}
+##creating a composite performance variable based off of points per game (PTS), assists (AST) and turnovers (TOV) that will serve as the dependent variable
+
+nba_22_23 <- nba_22_23 |>
+  mutate(performance_2024 =  PTS + AST - TOV)
+
+
+##creating data visualization
+player_performance_graph <- ggplot(data = nba_22_23,
+                                    mapping = aes(x = Salary,
+                                                  y = performance_2024, color = performance_2024)) +
+  geom_point() +
+  labs(x = "Salary (dollars)",
+       y = "Player Performance",
+       title = "NBA Player Performance based on Salary",
+       subtitle = "Player Performance determined by PTS (points per game) + AST (assists) - TOV (turnovers)") +
+  scale_x_continuous(labels = scales::comma) +
+  labs(color = "Player Performance (PTS + AST - TOV)")
+
+player_performance_graph
+```
+
