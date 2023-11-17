@@ -26,7 +26,6 @@ library(tidyverse)
 library(dplyr)
 ```
 
-
 ```{r}
 ##loading NBA 2022-2023 season data from Kaggle data
 nba_22_23 <- read_csv("nba_22_23_stats.csv")
@@ -49,8 +48,38 @@ player_performance_graph <- ggplot(data = nba_22_23,
        title = "NBA Player Performance based on Salary",
        subtitle = "Player Performance determined by PTS (points per game) + AST (assists) - TOV (turnovers)") +
   scale_x_continuous(labels = scales::comma) +
-  labs(color = "Player Performance (PTS + AST - TOV)")
+  labs(color = "Player Performance (PTS + AST - TOV)") 
 
 player_performance_graph
 ```
+
+##Milestone 4
+```{r}
+##Same code from milestone 3 as I want to maintain the same substance for my graph, but now add in a regression line to better visualize the relationship in my data
+
+nba_22_23 <- nba_22_23 |>
+  mutate(performance_2024 =  PTS + AST - TOV)
+
+##creating graphs for each position and adding in a regression line for data visualization analysis 
+performance_analysis <- ggplot(data = nba_22_23,
+                                    mapping = aes(x = Salary,
+                                                  y = performance_2024, color = performance_2024)) +
+  geom_point(size = 1) +
+  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  labs(x = "Salary (dollars)",
+       y = "Player Performance",
+       title = "NBA Player Performance based on Salary for Each Position",
+       subtitle = "Player Performance determined by PTS (points per game) + AST (assists) - TOV (turnovers)") +
+  scale_x_continuous(labels = scales::comma) +
+  labs(color = "Player Performance (PTS + AST - TOV)") +
+  facet_wrap(~ Position)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+performance_analysis
+```
+
+Since the first two milestones, my project topic has remained the same, but the focus of my research question has changed. My new research question seeks to understand: how does salary effect NBA player performance? To determine player performance, a player's average points per game and assists per game are added together, and then turnovers per game are subtracted from that value, as having high turnovers is not something you want players to have. While the general hypothesis may be that a higher salary correlates to better performance, the NBA in the past has included several players, such as Ben Simmons, that are paid high salaries due to their high draft pick for instance, but do not perform to a high level. As such, I was curious to understand what the greater patterns across the league may look like. Based on the plots, one observation is that there is a positive correlation between salary and player performance. More specifically, as salary is higher, player performance generally seems to be higher as well. I included a regression line to better visualize this observation, and the regression line also supports a positive relationship between the two variables. To better understand a breakdown of the positive relationship, I then made seperate graphs based on player position to see if there was any variance based on position. The 9 different graphs of the 9 different positions also display a positive relationship between salary and player performance, which supports the hypothesis that as salary increases, player performance also increases. However, further analysis will be necessary to see if there is causation involved between salary and player performance. 
+
+
+
 

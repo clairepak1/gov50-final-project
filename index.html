@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-3-1.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.24/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","nba_22_23_stats.csv"]}
+  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-3-1.png","index_files/figure-html5/unnamed-chunk-4-1.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.24/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","nba_22_23_stats.csv"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1554,12 +1554,40 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <span>       title <span class='op'>=</span> <span class='st'>"NBA Player Performance based on Salary"</span>,</span>
 <span>       subtitle <span class='op'>=</span> <span class='st'>"Player Performance determined by PTS (points per game) + AST (assists) - TOV (turnovers)"</span><span class='op'>)</span> <span class='op'>+</span></span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_continuous.html'>scale_x_continuous</a></span><span class='op'>(</span>labels <span class='op'>=</span> <span class='fu'>scales</span><span class='fu'>::</span><span class='va'><a href='https://scales.r-lib.org/reference/comma.html'>comma</a></span><span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>color <span class='op'>=</span> <span class='st'>"Player Performance (PTS + AST - TOV)"</span><span class='op'>)</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>color <span class='op'>=</span> <span class='st'>"Player Performance (PTS + AST - TOV)"</span><span class='op'>)</span> </span>
 <span></span>
 <span><span class='va'>player_performance_graph</span></span></code></pre>
 </div>
 <p><img src="index_files/figure-html5/unnamed-chunk-3-1.png" width="624" /></p>
 </div>
+##Milestone 4
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>##Same code from milestone 3 as I want to maintain the same substance for my graph, but now add in a regression line to better visualize the relationship in my data</span></span>
+<span></span>
+<span><span class='va'>nba_22_23</span> <span class='op'>&lt;-</span> <span class='va'>nba_22_23</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>performance_2024 <span class='op'>=</span>  <span class='va'>PTS</span> <span class='op'>+</span> <span class='va'>AST</span> <span class='op'>-</span> <span class='va'>TOV</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='co'>##creating graphs for each position and adding in a regression line for data visualization analysis </span></span>
+<span><span class='va'>performance_analysis</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>data <span class='op'>=</span> <span class='va'>nba_22_23</span>,</span>
+<span>                                    mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>Salary</span>,</span>
+<span>                                                  y <span class='op'>=</span> <span class='va'>performance_2024</span>, color <span class='op'>=</span> <span class='va'>performance_2024</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span>size <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth</a></span><span class='op'>(</span>method <span class='op'>=</span> <span class='st'>"lm"</span>, se <span class='op'>=</span> <span class='cn'>FALSE</span>, color <span class='op'>=</span> <span class='st'>"black"</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='st'>"Salary (dollars)"</span>,</span>
+<span>       y <span class='op'>=</span> <span class='st'>"Player Performance"</span>,</span>
+<span>       title <span class='op'>=</span> <span class='st'>"NBA Player Performance based on Salary for Each Position"</span>,</span>
+<span>       subtitle <span class='op'>=</span> <span class='st'>"Player Performance determined by PTS (points per game) + AST (assists) - TOV (turnovers)"</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_continuous.html'>scale_x_continuous</a></span><span class='op'>(</span>labels <span class='op'>=</span> <span class='fu'>scales</span><span class='fu'>::</span><span class='va'><a href='https://scales.r-lib.org/reference/comma.html'>comma</a></span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>color <span class='op'>=</span> <span class='st'>"Player Performance (PTS + AST - TOV)"</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/facet_wrap.html'>facet_wrap</a></span><span class='op'>(</span><span class='op'>~</span> <span class='va'>Position</span><span class='op'>)</span><span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/theme.html'>theme</a></span><span class='op'>(</span>axis.text.x <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/element.html'>element_text</a></span><span class='op'>(</span>angle <span class='op'>=</span> <span class='fl'>45</span>, hjust <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>performance_analysis</span></span></code></pre>
+</div>
+<p><img src="index_files/figure-html5/unnamed-chunk-4-1.png" width="624" /></p>
+</div>
+<p>Since the first two milestones, my project topic has remained the same, but the focus of my research question has changed. My new research question seeks to understand: how does salary effect NBA player performance? To determine player performance, a player’s average points per game and assists per game are added together, and then turnovers per game are subtracted from that value, as having high turnovers is not something you want players to have. While the general hypothesis may be that a higher salary correlates to better performance, the NBA in the past has included several players, such as Ben Simmons, that are paid high salaries due to their high draft pick for instance, but do not perform to a high level. As such, I was curious to understand what the greater patterns across the league may look like. Based on the plots, one observation is that there is a positive correlation between salary and player performance. More specifically, as salary is higher, player performance generally seems to be higher as well. I included a regression line to better visualize this observation, and the regression line also supports a positive relationship between the two variables. To better understand a breakdown of the positive relationship, I then made seperate graphs based on player position to see if there was any variance based on position. The 9 different graphs of the 9 different positions also display a positive relationship between salary and player performance, which supports the hypothesis that as salary increases, player performance also increases. However, further analysis will be necessary to see if there is causation involved between salary and player performance.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
