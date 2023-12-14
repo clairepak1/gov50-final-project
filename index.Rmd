@@ -1,86 +1,90 @@
 ---
-title: "Gov 50 Final Project"
+title: "Player Performance and Salary"
 author: "Claire Pak"
-description: "Identifying popular NBA teams using proxies to demonstrate support."
+description: "Evaluating the effects of player performance on salary in the NBA"
 output:
   distill::distill_article:
     self_contained: false
 ---
 
 
-## Project thoughts
+## Introduction
 
-I am interested in exploring data related to basketball teams in the NBA. More specifically, I am interested in tracking support for various teams over time and exploring the potential fluctuations to identify which teams have been the most popular during different periods. Some proxies I may use to measure support include attendance at games. However, I understand correlation is not equal to causation, so I plan to look at other factors such as team winning percentage, health of players on the team, number of championships, etc. As of right now, I imagine the various teams will be my independent variable, and then whatever proxy I choose to measure support will serve as my dependent variable. 
+At the highest levels of professional sports, such as the NBA, the unparalleled level of competition demands both physical and mental strength. In this fiercely competitive basketball league, athletes are often paid substantial salaries, with select individuals earning over over 7 figures. Yet other players, like Ben Simmons and Monta Ellis fail to leave a positive record in box scores despite their substantial earnings, so perhaps game performance does not affect salary as much. This report seeks to understand: Is there a clear relationship between performance and salary?  I hypothesize that there is a relationship between performance and salary, in that performance affects salary. I anticipate that players who perform stronger will have greater salaries. The null hypothesis is that there is no relationship between player performance and salary. 
 
+This question is particularly intriguing because if my hypothesis is not supported, it raises a crucial area of discussion for the NBA to consider when evaluating player salary structures. With substantial money involved in player salaries, it’s important to consider whether that money is justly distributed to players. The findings may indicate a need for increased monetary recognition towards players who have demonstrated elite performance, but don’t have paychecks that mirror this - as such, this exploration fuels my interests in the project.  
 
-##Milestone 2 - Project Proposal
+The primary focus of this report is to evaluate the affect of performance on salary, but I aim to delve deeper by exploring which specific performance factors exert the greatest impact on salary. More specifically, this report will examine the role of confounding variables, such as total minutes played. Total minutes played is an example of an extraneous variable that influences both the independent and dependent variables. More specifically, players who perform well are likely to receive more playing time, but players with more minutes may also have higher salaries due to their increased playing time and contributions to the success of the team. Therefore, total minutes may distort the observed relationships between player performance and salary, and this project seeks to address confounding variables such as this.
 
-Does the performance of NBA players improve during the season when their contracts expire, in contrast to performance in previous seasons? In a league as competitive as the NBA, players often feel pressure to maintain peak athleticism, particularly in contract expiration seasons due to the consistent inflow of new talent that enter through the drafts. In this study, I plan to understand the extent to which a player's performance improves in the season of which their contract expires, allowing a player to either re-sign their contract, or be released. I hypothesize that the performance of NBA players significantly improves in the season in which their contract expires, compared to performances in prior seasons. During the season prior to the contract expiration, I expect players to focus on improving key metrics including points per game (PPG), rebounds, steals, etc in efforts to get a resign offer. The explanatory variable is whether we are observing the season in which the contract expires, or seasons prior to the expiration. This variable will be measured by identifying the season a players contract will end. The outcome variable of interest is the player's performance, which can be measured through monitoring key stats such as a player's points per game, steals, rebounds, number of turnovers, etc. I plan to choose a set number of key stats and then compare those across the different seasons. For instance, if a player's contract expires at the end of the 2023-2024 season, my study would compare the PPG, rebounds and steals of this season to those of prior seasons such as 2022-2023, 2021-2022, etc. For the study, I plan to use the NBA advanced statistics dataset on nba.com that includes all of the mentioned key stats and the basketball-reference website to identify this information. A pattern that would provide support for the hypothesis is if there is an overall net increase in the performance metrics for a substantial portion of the season. If the study uses PPG, rebounds and steals per season as the key metrics to measure a player’s performance, there should be a positive relationship where these metrics are higher in the season during which a player’s contract will end, compared to other seasons. If there is no significant change, or perhaps even a decline in the previously mentioned metrics, the negative observed patterns would be an indication that the hypothesis may not be supported. 
+## Data Overview
 
-##Milestone 3
+This project relies on data from Kaggle and includes key statistics of all 467 players that were active during the 2022-2023 season. This dataset includes the variables: Player Name, Salary, Team as well as key metrics that are used in box scores such as total points, assists, blocks, steals and turnovers for the season. My study is cross-sectional as the data is the average of each measured statistic at a given point in time, which is the end of the 2022-2023 season. 
+
+The independent variable in this sample is the players performance, as measured by key metrics including average points (PTS), assists (AST), blocks (BLK), steals (STL) and turnovers (TOV) per game. A new variable, called performance_2024 was created to account for these 5 factors that contribute towards a players performance. The first four statistics are desirable among players and contribute towards a strong performance as they directly relate to scoring more points, or stopping the other team from scoring. However, when using these 5 factors to compose the ‘player performance’ independent variable, turnovers is subtracted, as turnovers indicates the ball was taken from the player, and thus the other team has possession, and the possibility to score for their team. As such, turnovers are not a factor that beneficially contributes towards player performance.The dependent variable is salary (dollars) and is directly taken from the dataset variable called ‘Salary’ and represents the contract amount a player receives for the 2022-2023 season. 
+
+The figure below displays the distribution of the dependent variable, salary. 
 
 ```{r}
-##Loading necessary packages
+##Loading necessary packages for this report
 library(readr)
 library(tidyverse)
 library(dplyr)
-```
+library(ggplot2)
+library(stargazer)
 
-```{r}
-##loading NBA 2022-2023 season data from Kaggle data
+# Loading report data from Kaggle
 nba_22_23 <- read_csv("nba_22_23_stats.csv")
 ```
 
 ```{r}
-##creating a composite performance variable based off of points per game (PTS), assists (AST) and turnovers (TOV) that will serve as the dependent variable
+##Creating histogram to display dependant variable distribution
+salary_hist <- ggplot(data = nba_22_23, aes(x = Salary)) +
+  geom_histogram(binwidth = 100000, color = "blue") +
+  labs(x = "Salary", y = "Frequency", title = "Distribution of NBA Player Salaries in the 2022-2023 Season") +
+  scale_x_continuous(labels = scales::comma)
 
+salary_hist
+```
+The histogram above displays the distribution of player salaries during the 2022-2023 season in the NBA. The histogram displays a right-skewed distribution, showing that the bulk of the salary data is concentrated towards the lower millions, around $2.5 million dollars. 
+
+## Results
+
+```{r}
+##Creating a new column representing a player's composite performance score
 nba_22_23 <- nba_22_23 |>
-  mutate(performance_2024 =  PTS + AST - TOV)
+  mutate(performance_22_23 =  PTS + AST + BLK + STL - TOV)
 
 
-##creating data visualization
+##Creating a scatter plot to visualize NBA player performance effect on their salaries
 player_performance_graph <- ggplot(data = nba_22_23,
-                                    mapping = aes(x = Salary,
-                                                  y = performance_2024, color = performance_2024)) +
+                                    mapping = aes(x = performance_22_23,
+                                                  y = Salary, color = performance_22_23)) +
   geom_point() +
-  labs(x = "Salary (dollars)",
-       y = "Player Performance",
-       title = "NBA Player Performance based on Salary",
-       subtitle = "Player Performance determined by PTS (points per game) + AST (assists) - TOV (turnovers)") +
-  scale_x_continuous(labels = scales::comma) +
-  labs(color = "Player Performance (PTS + AST - TOV)") 
-
+  labs(x = "Player Performance",
+       y = "Salary (dollars)",
+       title = "Effect of Player Performance on Salary in the NBA",
+       subtitle = "Player Performance determined by PTS (points per game) + AST (assists) + BLK (blocks) + STL (steals) - TOV (turnovers)") +
+  scale_y_continuous(labels = scales::comma) +
+  labs(color = "Player Performance") +
+  theme(
+    plot.subtitle = element_text(size = 7)
+  )
 player_performance_graph
 ```
+The graph above demonstrates a positive correlation between player performance and salary -  generally as player performance is stronger, salary is also higher. However, I aim to uncover confounding variables that might affect both a players performance and salary through further regression analysis. 
 
-
-##Milestone 4
 ```{r}
-##For milestone 4: Same code from milestone 3 as I want to maintain the same substance for my graph
-##but now adding in a regression line to better visualize the relationship
-
-nba_22_23 <- nba_22_23 |>
-  mutate(performance_2024 =  PTS + AST - TOV)
-
-##creating graphs for each position and adding in a regression line for data visualization analysis 
-performance_analysis <- ggplot(data = nba_22_23,
-                                    mapping = aes(x = Salary,
-                                                  y = performance_2024, color = performance_2024)) +
-  geom_point(size = 1) +
-  geom_smooth(method = "lm", se = FALSE, color = "black") +
-  labs(x = "Salary (dollars)",
-       y = "Player Performance",
-       title = "NBA Player Performance based on Salary for Each Position",
-       subtitle = "Player Performance determined by PTS (points per game) + AST (assists) - TOV (turnovers)") +
-  scale_x_continuous(labels = scales::comma) +
-  labs(color = "Player Performance (PTS + AST - TOV)") +
-  facet_wrap(~ Position)+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-performance_analysis
+##Creating a linear regression model
+model <- lm(Salary ~ `Total Minutes` + PTS + AST + BLK, data = nba_22_23)
+stargazer(model, type = "text")
 ```
-Since the first two milestones, my project topic has remained the same, but the focus of my research question has changed. My new research question seeks to understand: how does salary effect NBA player performance? To determine player performance, a player's average points per game and assists per game are added together, and then turnovers per game are subtracted from that value, as having high turnovers is not something you want players to have. While the general hypothesis may be that a higher salary correlates to better performance, the NBA in the past has included several players, such as Ben Simmons, that are paid high salaries due to their high draft pick for instance, but do not perform to a high level. As such, I was curious to understand what the greater patterns across the league may look like. Based on the plots, one observation is that there is a positive correlation between salary and player performance. More specifically, as salary is higher, player performance generally seems to be higher as well. I included a regression line to better visualize this observation, and the regression line also supports a positive relationship between the two variables. To better understand a breakdown of the positive relationship, I then made seperate graphs based on player position to see if there was any variance based on position. The 9 different graphs of the 9 different positions also display a positive relationship between salary and player performance, which supports the hypothesis that as salary increases, player performance also increases. However, further analysis will be necessary to see if there is causation involved between salary and player performance. 
+This regression analysis evaluates what factors of performance have the greatest impact on salary, with a particular focus on total minutes as a confounding variable. This project seeks to address confounding variables such as this to better understand how player performance independently affects salary. The results show that `Total Minutes` has a middle estimate of -176.525 with a +/- value of 638.930. In other words, `Total Minutes` can be as low as -815.445 (when 638.930 is subtracted from -176.525) and as high as 462.405 (when 638.930 is added to -176.525). The null hypothesis value of 0 falls within the interval of [-815.445, 462.405]. Therefore, we fail to reject the null hypothesis that there is no relationship between Total Minutes played and salary. In other words, we can’t conclude whether there's a positive relationship or a negative relationship between total minutes and salaries and the Total Minutes coefficient is not statistically significant.
 
+Moving on to points (PTS), the results demonstrate that when all other factors (total minutes, assists and blocks) are held constant, for every incremental point a player averages per game, this model predicts a ~ $900,717 increase in salary. There is a positive relationship between points and salary because after a similar analysis as `Total Minutes` above, both interval ends of salary still remain positive after the plus or minus values are accounted for. The null hypothesis value of 0 does not fall within the positive interval [809,308.22 , 900,807.809], so the points coefficient is statistically significant and we can reject the null hypothesis that there's no relationship between points and salary. Similar trends persist when analyzing assists (AST) and blocks (BLK). For every incremental assist a player averages per game, the model predicts a $911,301 increase in salary and for every incremental block per game, the model predicts a $3,366,441 increase in salary. The null hypothesis value of 0 does not fall within the positive interval [652,601.4, 1,170,002.4] for assists and the interval [2,359,613, 4,373,269] for blocks, which suggests that there is statistical significance for assists and blocks. As such, we can reject the null hypothesis that there's no relationship between assists and salary, or blocks and salary.
 
+Interestingly, this model values blocks the most out of points, assists and blocks since $3,366, 441 is greater than the amount of $900,717 for points and $911,301 for assists. Additionally, this model suggests that incremental assists are more valuable than incremental points. These findings are interesting considering the fact that the total number of points scored by a player is often used to evaluate the player’s success in a given game. However, it’s important to consider that the incremental increase does not matter as much, because in the world of basketball, the range for total points in a given night varies more than the number of assists or blocks. For instance, one could expect elite players like Lebron James to score 30 points in one game, but stats for blocks and assists are considered to be high at 3-4 blocks, and 10-12 assists per game. In other words, it is extremely unlikely to find a NBA player that will average 30 assists or 30 blocks. As such, it makes sense that the incremental values of blocks and assists might be worth more. In parallel with that finding, substantively speaking, we expect most of the salary to be driven by points in the real world, outside of this stargazer model. 
 
+## Concluding Remarks
 
-
+To conclude, there does seem to be a relationship between performance and salary. Upon evaluating the factors that contribute towards performance, we find that a similar pattern holds true. 
+For points, assists and blocks, we observe that there is statistical significance and that we can reject the null hypothesis that there's no relationship between points and salary, assists and salary, and blocks and salary. In other words, there does appear to be a relationship between points and salary, assists and salary and blocks and salary. Additionally, the data demonstrates a positive relationship between points, assists and blocks respectively to salary because the coefficient remains positive after the plus or minus values are accounted for. Moreover, the star gazer package displays asterisks next to coefficient estimates to show levels of statistical significance based on p-values calculated by the model.The three asterisks next to the coefficient for points, assists and blocks implies the p-value is less than 0.01, which demonstrates strong evidence against the null hypothesis. The model supports the finding that there is statistical significance and that we can reject the null hypothesis that there's no relationship between points and salary, assists and salary, and blocks and salary. For `Total Minutes` and salary however, we do not observe a statistical significance. This makes sense as if a player was on the court for one minute and scored zero points, zero assists and zero blocks, they are effectively doing nothing. Thus it makes sense that this player may not have a high salary. An important limitation to consider for this report is that my report only uses NBA data from the 2022-2023 season. It’s in the nature of sports that players can improve from one year to the next. Given more time, it would be beneficial to also analyze past and future seasons to generate an even fuller picture of the analysis. Another limitation to the study is that this dataset includes quantitative measures such as points scored, assists made etc, but does not account for less quantifiable factors such as team culture, which can arguably make or break a team’s performance. Given more time, an interesting piece of analysis would be to evaluate a performance of a player transitioning teams. By evaluating performance during their time at one team to a different team, we may potentially better understand how coaching styles and culture fits into the picture. 
